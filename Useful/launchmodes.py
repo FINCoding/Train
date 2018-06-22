@@ -27,7 +27,8 @@ class LaunchMode:
 class System(LaunchMode):
     def run(self,cmdline):
         cmdline = fixWindowsPath(cmdline)
-        os.system('%s %s' % (pypath, cmdline))
+        # os.system('%s %s' % (pypath, cmdline))
+        os.system(cmdline)
 
 class Popen(LaunchMode):
     def run(self, cmdline):

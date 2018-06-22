@@ -1,0 +1,4 @@
+wdict = {'Hello':{'translate': 'привет', 'box': 1, 'date': '01012017'},
+                 'World':{'translate': 'мир', 'box': 1, 'date': '01012017'},
+                 'Winner':{'translate': 'победитель', 'box': 1, 'date': '01012017'},
+                'Work':{'translate': 'работа', 'box': 1, 'date': '01012017'}}

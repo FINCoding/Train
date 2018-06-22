@@ -1,0 +1,6 @@
+::::::::::::::::::::textpak=>D:\Projects\Train\Test\spam.txt
+spam
+Spam
+SPAM
+::::::::::::::::::::textpak=>D:\Projects\Train\Test\eggs.txt
+eggs
