@@ -1,8 +1,8 @@
 import sys
 from socket import *
 
-serverHost = 'localhost'
-serverPort = 50009
+serverHost = 'localhost'#'172.30.0.142'
+serverPort = 50008
 
 message =[b'Hello network world']
 

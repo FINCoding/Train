@@ -1,6 +1,6 @@
 from socket import *
 myHost = ''
-myPort = 50007
+myPort = 50008
 sockobj = socket(AF_INET, SOCK_STREAM)
 sockobj.bind((myHost,myPort))
 sockobj.listen(5)

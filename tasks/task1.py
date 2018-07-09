@@ -1,4 +1,4 @@
-N = [1,2,3,4]
+N = [1,2,3,4,5,6]
 S = ['+', '-', '*', '/']
 
 def f(ln, dict):
@@ -9,7 +9,8 @@ def f(ln, dict):
         ldict[N[ln]] = ''
         for b in ldict:
             res += '%d%s' % (b,dict[b])
-        print(res)
+        if eval(res) == 100:
+            print(res)
     else:
         for i in S:
             dict[N[ln]] = i
@@ -42,8 +43,8 @@ def f_test(ln, dict):
 dict={}
 
 ln = 0
-# f(ln, dict)
-f_test(ln, dict)
+f(ln, dict)
+# f_test(ln, dict)
 
 
 

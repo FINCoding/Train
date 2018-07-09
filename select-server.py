@@ -1,6 +1,7 @@
 import sys, time
 from select import select
 from socket import socket, AF_INET, SOCK_STREAM
+
 def now(): return time.ctime(time.time())
 
 myHost = ''
