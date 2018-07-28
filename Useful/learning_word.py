@@ -1,21 +1,23 @@
 from tkinter import *
+import sqlite3
 import sys
+from datetime import datetime
 
 class View(Frame):
     def __init__(self, parent=None):
         Frame.__init__(self, parent)
         self.pack(expand=YES, fill=BOTH)
         self.boxes = Boxes()
-        self.word = self.get_word()
+        self.row = self.get_row()
+        self.word = self.row[1]
         self.makeMenuBar()
         self.makeToolBar()
         self.makeWidgets(self.word)
         self.visible = False
         self.descr_l = self.makeDescrWidgets()
 
-    def get_word(self):
-        return self.boxes.get_word()
-        # return Boxes().get_word()
+    def get_row(self):
+        return self.boxes.get_row()
 
     def makeMenuBar(self):
         menubar = Frame(self, relief=RAISED, bd=2)
@@ -35,9 +37,12 @@ class View(Frame):
 
     def makeDescrWidgets(self):
         descr_l = Text(self, width=40, height=10, relief=SUNKEN, bg='white')
-        descr_l.insert('1.0', self.boxes.get_descr())
+        descr_l.insert('1.0', self.get_descr())
         # Descr_L.pack(expand=YES, fill=BOTH)
         return descr_l
+
+    def get_descr(self):
+        return self.row[2]
 
     def visDescrWidgets(self):
         if self.visible:
@@ -49,7 +54,6 @@ class View(Frame):
 
     def known_word(self):
         self.boxes.next_box()
-        # Boxes().next_box()
 
     def unknown_word(self):
         print('unknown word')
@@ -58,32 +62,35 @@ class View(Frame):
 class Boxes:
     def __init__(self):
         self.DB = DB()
-    def get_word(self):
-        return self.DB.wdict['Hello']['translate']
 
-    def get_descr(self):
-        return self.DB.wdict['Hello']['translate']
+    def get_row(self):
+        self.row = self.DB.get_row()
+        return self.row
 
     def next_box(self):
         box_count = 3
-        a = self.DB.wdict['Hello']['box']
-        if self.DB.wdict['Hello']['box'] < box_count:
-            self.DB.modify_db('Hello', 1)
-            print(self.DB.wdict['Hello']['box'])
+        if self.row[3] < box_count:
+            self.DB.modify_db(self.row[0], self.row[3]+1)
 
     def set_first_box(self):
         pass
 
 class DB:
-    wdict = {'Hello':{'translate': 'привет', 'box': 1, 'date': '01012017'},
-              'World':{'translate': 'мир', 'box': 1, 'date': '01012017'},
-              'Winner':{'translate': 'победитель', 'box': 1, 'date': '01012017'},
-              'Work':{'translate': 'работа', 'box': 1, 'date': '01012017'}}
+    conn = sqlite3.connect('learning_words.db')
+    def __init__(self):
+        self.curs = DB.conn.cursor()
 
-    def modify_db(self, word, i):
-        a = DB.wdict[word]['box']
-        DB.wdict[word]['box'] += i
+    def get_row(self):
+        self.curs.execute('SELECT * FROM twords WHERE date = (SELECT min(date) FROM twords)')
+        return (self.curs.fetchone())
+
+    def modify_db(self, id, box):
+        date = datetime.now()
+        print(date.strftime("%Y%m%d"))
+        self.curs.execute('UPDATE twords SET box = %d, date = %s WHERE id = %d' % (box, date.strftime("%Y%m%d"), id))
 
 
 if __name__ == '__main__':
     View().mainloop()
+    date = datetime.now()
+    print(date.strftime("%Y%m%d"))
