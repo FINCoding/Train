@@ -1,10 +1,12 @@
 import sys, os, urllib.request, urllib.parse
-showlines = 6
+from PP4E.Internet.Email.html2text import *
+import sys, tkinter
+showlines = 10
 addr = 'learning-python.com'
 try:
     servername, filename = sys.argv[1:3]
 except:
-    servername, filename = 'yandex.ru', '/index.html'
+    servername, filename = addr, '/index.html'
 
 remoteaddr = 'http://%s%s' % (servername, filename)
 if len(sys.argv) == 4:
@@ -15,7 +17,14 @@ else:
 
 print(remoteaddr, localname)
 urllib.request.urlretrieve(remoteaddr, localname)
-remotedata = open(localname, 'rb').readlines()
-for line in remotedata[:showlines]: print(line)
+text = open(localname, 'rb').read()
+# remotedata = open(localname, 'rb').readlines()
+text = html2text(text)
+t = tkinter.Text()
+t.insert('1.0', text)
+t.pack()
+t.mainloop()
+# for line in remotedata[:showlines]:
+#     print(line)
 
 
