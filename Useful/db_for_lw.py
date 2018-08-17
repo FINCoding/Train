@@ -4,14 +4,15 @@ from quitter import Quitter
 tab_col = ['words', 'descrip']
 conn = sqlite3.connect('learning_words.db')
 c = conn.cursor()
-
 # c.execute('''CREATE TABLE IF NOT EXISTS twords
-#              (id INTEGER NOT NULL PRIMARY KEY, words text, description text, box integer, date text)''')
+#              (id INTEGER NOT NULL PRIMARY KEY, words text, description text, box integer, date integer)''')
 #
-# c.execute("INSERT INTO twords VALUES (1,'Hello','привет','1', '2018-07-11')")
-
+# c.execute("INSERT INTO twords VALUES (1,'Hello','привет','1', 20180711)")
+#
 # conn.commit()
-
+# c.execute('SELECT * FROM twords')
+# for row in c:
+#     print(row)
 # conn.close()
 class View(Frame):
     def __init__(self, parent=None):
@@ -53,7 +54,7 @@ class View(Frame):
         where = ''
         # n = 1
         id = self.get_id() + 1
-        date = "00000000"
+        date = 0
         where = "%d, '%s', '%s', %d, '%s'" % (int(id), self.vars[0].get(), self.vars[1].get(), 1, date)
         """for key in self.vars.keys():
             if n == len(self.vars):
@@ -67,8 +68,9 @@ class View(Frame):
     def _ins_db(self, where):
         c.execute("INSERT INTO twords VALUES (%s)" % (where))#VALUES (1,'Hello','привет','1', '2018-07-11')")
         conn.commit()
-        conn.close()
+        # conn.close()
 
 
 if __name__ == '__main__':
+    pass
     View().mainloop()
