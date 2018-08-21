@@ -1,0 +1,7 @@
+arrival 3 2
+departure 2 5
+arrival 3 2
+arrival 2 2
+arrival 1 10
+departure 3 7
+arrival 4 10

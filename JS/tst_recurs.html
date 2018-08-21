@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script>
+      function rsumTo(n){
+        if (n != 1) {
+          return n + rsumTo(n - 1);
+        } else {
+          return n;
+            }
+        }
+        alert(rsumTo(100));
+
+      function lsumTo(n){
+        var sum = 0;
+        for (i=1; i <= n; i++){
+            sum += i;
+        }
+        return sum;
+       }
+      alert(lsumTo(4));
+    </script>
+
+</body>
+</html>
