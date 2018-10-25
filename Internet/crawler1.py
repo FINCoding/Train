@@ -9,4 +9,4 @@ browser.get('http://quotes.toscrape.com/')
 elements = browser.find_elements_by_class_name('text')
 for element in elements:
     text = element.text
-    print(text)
+    print(text)cd cd
