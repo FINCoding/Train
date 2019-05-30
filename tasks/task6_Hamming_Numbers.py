@@ -133,6 +133,82 @@ def get_sequence5(n, lst):
         if lv2 == True and lv3 == True and lv5 == True: break
     return seq
 
+def hamming_solution(n):
+    bases = [2, 3, 5]
+    expos = [0, 0, 0]
+    hamms = [1]
+    for _ in range(1, n):
+        next_hamms = [bases[i] * hamms[expos[i]] for i in range(3)]
+        next_hamm = min(next_hamms)
+        hamms.append(next_hamm)
+        for i in range(3):
+            expos[i] += int(next_hamms[i] == next_hamm)
+    return hamms[-1]
+
+# We don't need to recalculate next_hamms on each iteration.
+# Recalculating only the changed values results in some 35% performance improvement.
+def hamming_solution2(n):
+    bases = [2, 3, 5]
+    expos = [0, 0, 0]
+    hamms = [1]
+    next_hamms = [2, 3, 5]
+    for _ in range(1, n):
+        next_hamm = min(next_hamms)
+        hamms.append(next_hamm)
+        for i in range(3):
+            if next_hamms[i] == next_hamm:
+                expos[i] += 1
+                next_hamms[i] = bases[i] * hamms[expos[i]]
+    return hamms[-1]
+
+def hamming_solution3(n):
+    num = [1]
+    i, j, k = 0, 0, 0
+    if n == 1:
+      return 1
+    else:
+      for e in range(1, n):
+        x = min(2*num[i], 3*num[j], 5*num[k])
+        num.append(x)
+        if 2*num[i] <= x: i += 1
+        if 3*num[j] <= x: j += 1
+        if 5*num[k] <= x: k += 1
+    return num[len(num) - 1]
+
+def hamming_solution4(n):
+    bag = {1}
+    for _ in range(n - 1):
+        head = min(bag)
+        bag.remove(head)
+        bag |= {head*2, head*3, head*5}
+    return min(bag)
+########
+
+def hamming_my(n):
+    if n == 1: return 1
+    lst = [1]
+    i = 1
+    min = 0
+    while i < n:
+        seq = get_sequence(lst, min)
+        min = next_hamm(lst, seq)
+        lst.append(min)
+        i += 1
+    return lst[len(lst) - 1]
+
+
+def next_hamm(lst, seq):
+    return min(seq)
+
+
+def get_sequence(lst, min):
+    seq = []
+    for i in lst:
+        if i * 2 > min: seq.append(i * 2)
+        if i * 3 > min: seq.append(i * 3)
+        if i * 5 > min: seq.append(i * 5)
+    return seq
+
 if __name__ == '__main__':
     import time
     # t1 = time.time()
@@ -148,6 +224,25 @@ if __name__ == '__main__':
     # t1 = time.time()
     # print(hamming4(2999)) ##2999 за 193.65199422836304 sec
     # print(time.time() - t1)
+    # t1 = time.time()
+    # print(hamming5(2999))
+    # print(time.time() - t1) ##192.87666726112366 #192.2461130619049 #
+    # t1 = time.time()
+    # print(hamming_solution(5000))
+    # print(time.time() - t1)
+    #
+    # t1 = time.time()
+    # print(hamming_solution2(5000))
+    # print(time.time() - t1) ##192.87666726112366 #192.2461130619049 #
+    #
+    # t1 = time.time()
+    # print(hamming_solution3(5000))
+    # print(time.time() - t1) ##192.87666726112366 #192.2461130619049 #
+
     t1 = time.time()
-    print(hamming5(2999))
+    print(hamming_solution4(6))
     print(time.time() - t1) ##192.87666726112366 #192.2461130619049 #
+
+    t1 = time.time()
+    print(hamming_my(5000))
+    print(time.time() - t1) ##1

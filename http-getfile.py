@@ -3,7 +3,7 @@ showlines = 6
 try:
     servername, filename = sys.argv[1:]
 except:
-    servername, filename = 'learning-python.com', '/index.html'
+    servername, filename = 'learning-python.com', '/index.tmpl'
 
 print(servername, filename)
 server = http.client.HTTPConnection(servername)

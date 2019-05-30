@@ -5,7 +5,7 @@ addr = 'learning-python.com'
 try:
     servername, filename = sys.argv[1:]
 except:
-    servername, filename = 'yandex.ru', '/index.html'
+    servername, filename = 'yandex.ru', '/index.tmpl'
 
 remoteaddr = 'http://%s%s' % (servername, filename)
 print(remoteaddr)

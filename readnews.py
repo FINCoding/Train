@@ -5,7 +5,7 @@ try:
     servername, groupname, showcount = sys.argv[1:]
     showcount = int(showcount)
 except:
-    servername = 'news.rmi.net' #nntpconfig.servername
+    servername = 'news.rmi.net1' #nntpconfig.servername
     groupname = 'comp.lang.python'
     showcount = 10
 

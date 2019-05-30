@@ -1,0 +1,146 @@
+import sys 
+2 import random 
+3 import pygame 
+4 
+ 
+5 IMAGE_FILE = "dduck800_600.jpg"  
+6 IMAGE_SIZE = (800, 600) 
+7 TILE_WIDTH = 200 
+8 TILE_HEIGHT = 200 
+9 COLUMNS = 4 
+10 ROWS = 3 
+11 
+ 
+12 # bottom right corner contains no tile 
+13 EMPTY_TILE = (COLUMNS-1, ROWS-1)    
+14 
+ 
+15 BLACK = (0, 0, 0) 
+16 
+ 
+17 # horizontal and vertical borders for tiles 
+18 hor_border = pygame.Surface((TILE_WIDTH, 1)) 
+19 hor_border.fill(BLACK) 
+20 ver_border = pygame.Surface((1, TILE_HEIGHT)) 
+21 ver_border.fill(BLACK) 
+22 
+ 
+23 # load the image and divide up in tiles 
+24 # putting borders on each tile also adds them to the full image 
+25 image = pygame.image.load(IMAGE_FILE) 
+26 tiles = {} 
+27 for c in range(COLUMNS) : 
+28     for r in range(ROWS) : 
+29         tile = image.subsurface ( 
+30             c*TILE_WIDTH, r*TILE_HEIGHT,  
+31             TILE_WIDTH, TILE_HEIGHT) 
+32         tiles [(c, r)] = tile 
+33         if (c, r) != EMPTY_TILE: 
+34             tile.blit(hor_border, (0, 0)) 
+35             tile.blit(hor_border, (0, TILE_HEIGHT-1)) 
+36             tile.blit(ver_border, (0, 0)) 
+37             tile.blit(ver_border, (TILE_WIDTH-1, 0)) 
+38             # make the corners a bit rounded 
+39             tile.set_at((1, 1), BLACK) 
+40             tile.set_at((1, TILE_HEIGHT-2), BLACK) 
+41             tile.set_at((TILE_WIDTH-2, 1), BLACK) 
+42             tile.set_at((TILE_WIDTH-2, TILE_HEIGHT-2), BLACK) 
+43 tiles[EMPTY_TILE].fill(BLACK) 
+44 
+ 
+45 # keep track of which tile is in which position 
+46 state = {(col, row): (col, row)  
+47             for col in range(COLUMNS) for row in range(ROWS)} 
+48 
+ 
+49 # keep track of the position of the empty tyle 
+50 (emptyc, emptyr) = EMPTY_TILE 
+51 
+ 
+52 # start game and display the completed puzzle 
+53 pygame.init() 
+54 display = pygame.display.set_mode(IMAGE_SIZE) 
+55 pygame.display.set_caption("shift-puzzle") 
+56 display.blit (image, (0, 0)) 
+57 pygame.display.flip() 
+58 
+ 
+59 # swap a tile (c, r) with the neighbouring (emptyc, emptyr) tile 
+60 def shift (c, r) : 
+61     global emptyc, emptyr  
+62     display.blit( 
+63         tiles[state[(c, r)]], 
+64         (emptyc*TILE_WIDTH, emptyr*TILE_HEIGHT)) 
+65     display.blit( 
+66         tiles[EMPTY_TILE], 
+67         (c*TILE_WIDTH, r*TILE_HEIGHT)) 
+68     state[(emptyc, emptyr)] = state[(c, r)] 
+69     state[(c, r)] = EMPTY_TILE 
+70     (emptyc, emptyr) = (c, r) 
+71     pygame.display.flip() 
+72 
+ 
+73 # shuffle the puzzle by making some random shift moves 
+74 def shuffle() : 
+75     global emptyc, emptyr 
+76     # keep track of last shuffling direction to avoid "undo" shuffle moves 
+77     last_r = 0  
+78     for i in range(75): 
+79         # slow down shuffling for visual effect 
+80         pygame.time.delay(50) 
+81         while True: 
+82             # pick a random direction and make a shuffling move 
+83             # if that is possible in that direction 
+84             r = random.randint(1, 4) 
+85             if (last_r + r == 5): 
+86                 # don't undo the last shuffling move 
+87                 continue 
+88             if r == 1 and (emptyc > 0): 
+89                 shift(emptyc - 1, emptyr) # shift left 
+90             elif r == 4 and (emptyc < COLUMNS - 1): 
+91                 shift(emptyc + 1, emptyr) # shift right 
+92             elif r == 2 and (emptyr > 0): 
+93                 shift(emptyc, emptyr - 1) # shift up 
+94             elif r == 3 and (emptyr < ROWS - 1): 
+95                 shift(emptyc, emptyr + 1) # shift down 
+96             else: 
+97                 # the random shuffle move didn't fit in that direction   
+98                 continue 
+99             last_r=r 
+100             break # a shuffling move was made 
+101 
+ 
+102 # process mouse clicks  
+103 at_start = True 
+104 showing_solution = False 
+105 while True: 
+106     event = pygame.event.wait() 
+107     if event.type == pygame.QUIT: 
+108         pygame.quit() 
+109         sys.exit() 
+110     elif event.type == pygame.MOUSEBUTTONDOWN : 
+111         if at_start: 
+112             # shuffle after the first mouse click 
+113             shuffle() 
+114             at_start = False 
+115         elif event.dict['button'] == 1: 
+116             # mouse left button: move if next to the empty tile 
+117             mouse_pos = pygame.mouse.get_pos() 
+118             c = mouse_pos[0] / TILE_WIDTH 
+119             r = mouse_pos[1] / TILE_HEIGHT 
+120             if (    (abs(c-emptyc) == 1 and r == emptyr) or   
+121                     (abs(r-emptyr) == 1 and c == emptyc)): 
+122                 shift (c, r) 
+123         elif event.dict['button'] == 3: 
+124             # mouse right button: show solution image 
+125             saved_image = display.copy() 
+126             display.blit(image, (0, 0)) 
+127             pygame.display.flip() 
+128             showing_solution = True 
+129     elif showing_solution and (event.type == pygame.MOUSEBUTTONUP): 
+130         # stop showing the solution 
+131         display.blit (saved_image, (0, 0)) 
+132         pygame.display.flip() 
+133         showing_solution = False 
+134 
+ 
